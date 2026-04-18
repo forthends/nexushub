@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CheckSquare, Plus, Trash2, Check } from "lucide-react";
@@ -45,11 +44,11 @@ export function Todos() {
   };
 
   const handleToggle = (id: string) => {
-    setTodos(todos.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
   };
 
   const handleDelete = (id: string) => {
-    setTodos(todos.filter((t) => t.id !== id));
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -59,71 +58,70 @@ export function Todos() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
-        <CheckSquare className="h-6 w-6 text-primary" />
-        <h1 className="text-xl font-semibold">{t("todos.title")}</h1>
+    <div className="h-full flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <CheckSquare className="h-4 w-4 text-primary" />
+        <h1 className="text-sm font-medium">{t("todos.title")}</h1>
       </div>
-      <p className="text-muted-foreground mb-4">
-        {t("todos.description")}
-      </p>
-      <Card className="flex-1">
-        <CardHeader>
-          <CardTitle className="text-base">{t("todos.tasks")}</CardTitle>
-          <div className="flex gap-2 mt-2">
-            <Input
-              placeholder={t("todos.addPlaceholder")}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="flex-1"
-            />
-            <Button onClick={handleAdd}>
-              <Plus className="h-4 w-4 mr-1" />
-              {t("common.add")}
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {todos.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
+
+      {/* Add task input */}
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder={t("todos.addPlaceholder")}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="flex-1 h-9 bg-card border-border"
+        />
+        <Button onClick={handleAdd} size="sm" className="h-9">
+          <Plus className="h-4 w-4 mr-1" />
+          {t("common.add")}
+        </Button>
+      </div>
+
+      {/* Tasks list */}
+      <div className="flex-1 min-h-0 overflow-auto">
+        {todos.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-muted-foreground text-sm">
               {t("todos.emptyState")}
             </p>
-          ) : (
-            <ul className="space-y-2">
-              {todos.map((todo) => (
-                <li
-                  key={todo.id}
-                  className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg"
+          </div>
+        ) : (
+          <ul className="space-y-2">
+            {todos.map((todo) => (
+              <li
+                key={todo.id}
+                className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg cursor-pointer transition-colors hover:border-primary/30"
+                onClick={() => handleToggle(todo.id)}
+              >
+                <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                  todo.completed ? "bg-primary border-primary" : "border-border"
+                }`}>
+                  {todo.completed && <Check className="h-3 w-3 text-primary-foreground" />}
+                </div>
+                <span className={`flex-1 text-sm ${
+                  todo.completed ? "line-through text-muted-foreground" : ""
+                }`}>
+                  {todo.text}
+                </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(todo.id);
+                  }}
+                  className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
                 >
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => handleToggle(todo.id)}
-                    className={todo.completed ? "text-green-500" : ""}
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <span
-                    className={`flex-1 ${
-                      todo.completed ? "line-through text-muted-foreground" : ""
-                    }`}
-                  >
-                    {todo.text}
-                  </span>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => handleDelete(todo.id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
