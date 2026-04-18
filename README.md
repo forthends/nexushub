@@ -10,11 +10,20 @@ A desktop developer toolbox application built with Tauri + React + TypeScript + 
 
 | Tool | Description |
 |------|-------------|
-| **JSON Formatter** | Format, validate and beautify JSON data with syntax highlighting |
-| **Timestamp Converter** | Convert between Unix timestamps and human-readable dates |
+| **JSON Formatter** | Format, validate and beautify JSON data |
+| **Timestamp Converter** | Convert between Unix timestamps and human-readable dates with live clock |
 | **SQL Formatter** | Format and beautify SQL queries with keyword uppercasing and indentation |
 | **API Client** | Test and debug HTTP APIs with support for GET/POST/PUT/DELETE/PATCH |
 | **Todos** | Task management with localStorage persistence |
+| **Cron Parser** | Parse, validate cron expressions and preview next 10 executions |
+| **URL Codec** | Encode/decode URLs and edit query parameters visually |
+
+### UI Design
+
+- **Dark mode by default** with one-click light/dark theme toggle
+- **Compact top navigation** for maximum workspace efficiency
+- **Modern color palette** with green accent (#22C55E) on dark slate background
+- **IBM Plex Sans** for UI text, **JetBrains Mono** for code
 
 ## Architecture
 
@@ -35,23 +44,27 @@ A desktop developer toolbox application built with Tauri + React + TypeScript + 
 ```
 ├── src/
 │   ├── components/
-│   │   └── ui/              # Reusable UI components (Button, Card, Input, Tabs, etc.)
-│   ├── tools/                # Tool implementations
+│   │   ├── ui/              # Reusable UI components (Button, Card, Input, Tabs, etc.)
+│   │   ├── ThemeToggle.tsx  # Theme switcher
+│   │   └── LanguageSelector.tsx
+│   ├── tools/               # Tool implementations
 │   │   ├── json-formatter/
 │   │   ├── timestamp/
 │   │   ├── sql-formatter/
 │   │   ├── api-client/
-│   │   └── todos/
-│   ├── lib/                  # Utilities (i18n, query-client, utils)
-│   ├── App.tsx               # Root component with tool routing
-│   └── main.tsx              # Entry point
+│   │   ├── todos/
+│   │   ├── cron-parser/
+│   │   └── url-codec/
+│   ├── lib/                 # Utilities (i18n, utils)
+│   ├── App.tsx              # Root component with tool routing
+│   └── main.tsx             # Entry point
 ├── src-tauri/
 │   ├── src/
-│   │   ├── main.rs           # Rust entry point
-│   │   └── lib.rs            # Tauri plugin configuration
-│   ├── capabilities/         # Tauri 2 permission capabilities
-│   └── tauri.conf.json       # Tauri app configuration
-└── tailwind.config.js        # TailwindCSS + color system configuration
+│   │   ├── main.rs          # Rust entry point
+│   │   └── lib.rs           # Tauri plugin configuration
+│   ├── capabilities/        # Tauri 2 permission capabilities
+│   └── tauri.conf.json      # Tauri app configuration
+└── tailwind.config.js       # TailwindCSS + color system configuration
 ```
 
 ### Design System
@@ -62,21 +75,22 @@ The app uses a CSS variable-based color system defined in `src/index.css`:
 |----------|---------|
 | `--background` | Page background |
 | `--foreground` | Text color |
-| `--primary` | Primary accent color |
+| `--primary` | Primary accent color (green #22C55E) |
 | `--secondary` | Secondary color |
 | `--muted` | Muted/disabled elements |
 | `--border` | Border color |
 | `--card` | Card background |
 | `--destructive` | Error/danger color |
 
-Light theme is the default. Dark mode can be enabled via Tailwind's `darkMode: "class"`.
+Theme preference is persisted via localStorage (`theme` key).
 
 ### Data Persistence
 
 - **Todos**: Persisted via localStorage (`toolbox-todos` key)
-- **API Client**: No persistence (ephemeral requests)
-- **JSON/SQL Formatter**: No persistence (clipboard-based workflow)
-- **Timestamp**: Uses system time only
+- **Theme**: Persisted via localStorage (`theme` key: `light` or `dark`)
+- **Language**: Persisted via localStorage (`toolbox-language` key)
+- **API Client / Formatters**: No persistence (clipboard-based workflow)
+- **Timestamp / Cron Parser**: Uses system time only
 
 ## Development
 
