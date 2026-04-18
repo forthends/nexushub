@@ -1,6 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Clock, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -44,67 +42,68 @@ export function Timestamp() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
-        <Clock className="h-6 w-6 text-primary" />
-        <h1 className="text-xl font-semibold">{t("timestamp.title")}</h1>
+    <div className="h-full flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <Clock className="h-4 w-4 text-primary" />
+        <h1 className="text-sm font-medium">{t("timestamp.title")}</h1>
       </div>
-      <p className="text-muted-foreground mb-4">
-        {t("timestamp.description")}
-      </p>
-      <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{t("timestamp.currentTime")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-2xl font-mono text-primary">
-              {currentUnix}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {new Date().toLocaleString()}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => copyToClipboard(currentUnix)}
-            >
-              <Copy className="h-4 w-4 mr-1" />
-              {t("common.copy")}
+
+      {/* Current time display */}
+      <div className="bg-card border border-border rounded-lg p-4 flex items-center justify-between">
+        <div>
+          <div className="text-xs text-muted-foreground mb-1 font-medium uppercase tracking-wide">
+            {t("timestamp.currentTime")}
+          </div>
+          <div className="text-2xl font-mono text-primary">{currentUnix}</div>
+          <div className="text-xs text-muted-foreground mt-1">
+            {new Date().toLocaleString()}
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => copyToClipboard(currentUnix)}
+          className="h-8"
+        >
+          <Copy className="h-3 w-3 mr-1" />
+          {t("common.copy")}
+        </Button>
+      </div>
+
+      {/* Converter */}
+      <div className="bg-card border border-border rounded-lg p-4">
+        <div className="text-xs text-muted-foreground mb-3 font-medium uppercase tracking-wide">
+          {t("timestamp.converter")}
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-xs text-muted-foreground">{t("timestamp.unixTimestamp")}</label>
+            <Input
+              placeholder="1700000000"
+              value={unix}
+              onChange={(e) => setUnix(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleUnixToDate()}
+              className="font-mono text-sm h-9 bg-background"
+            />
+            <Button size="sm" onClick={handleUnixToDate} className="w-full h-8 text-xs">
+              {t("timestamp.convertToDate")}
             </Button>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{t("timestamp.converter")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>{t("timestamp.unixTimestamp")}</Label>
-              <Input
-                placeholder={t("timestamp.unixTimestamp")}
-                value={unix}
-                onChange={(e) => setUnix(e.target.value)}
-                className="font-mono"
-              />
-              <Button size="sm" onClick={handleUnixToDate}>
-                {t("timestamp.convertToDate")}
-              </Button>
-            </div>
-            <div className="space-y-2">
-              <Label>{t("timestamp.dateString")}</Label>
-              <Input
-                placeholder={t("timestamp.dateString")}
-                value={dateStr}
-                onChange={(e) => setDateStr(e.target.value)}
-                className="font-mono"
-              />
-              <Button size="sm" onClick={handleDateToUnix}>
-                {t("timestamp.convertToUnix")}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs text-muted-foreground">{t("timestamp.dateString")}</label>
+            <Input
+              placeholder="2024-01-01T00:00:00Z"
+              value={dateStr}
+              onChange={(e) => setDateStr(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleDateToUnix()}
+              className="font-mono text-sm h-9 bg-background"
+            />
+            <Button size="sm" onClick={handleDateToUnix} className="w-full h-8 text-xs">
+              {t("timestamp.convertToUnix")}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

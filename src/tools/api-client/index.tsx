@@ -1,6 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -72,91 +70,96 @@ export function ApiClient() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
-        <Globe className="h-6 w-6 text-primary" />
-        <h1 className="text-xl font-semibold">{t("apiClient.title")}</h1>
+    <div className="h-full flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <Globe className="h-4 w-4 text-primary" />
+        <h1 className="text-sm font-medium">{t("apiClient.title")}</h1>
       </div>
-      <p className="text-muted-foreground mb-4">
-        {t("apiClient.description")}
-      </p>
-      <Card className="flex-1 flex flex-col min-h-0">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1">
-              {(["GET", "POST", "PUT", "DELETE", "PATCH"] as const).map((m) => (
-                <Button
-                  key={m}
-                  size="sm"
-                  variant={method === m ? "default" : "outline"}
-                  onClick={() => setMethod(m)}
-                >
-                  {m}
-                </Button>
-              ))}
-            </div>
-            <Input
-              placeholder={t("apiClient.enterUrl")}
-              value={url}
-              onChange={(e) => {
-                setUrl(e.target.value);
-                setUrlError("");
-              }}
-              className="flex-1 font-mono"
-            />
-            <Button onClick={handleSend} disabled={loading}>
-              <Send className="h-4 w-4 mr-1" />
-              {loading ? t("common.loading") : t("common.send")}
-            </Button>
+
+      {/* Request URL bar */}
+      <div className="bg-card border border-border rounded-lg p-3">
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1">
+            {(["GET", "POST", "PUT", "DELETE", "PATCH"] as const).map((m) => (
+              <Button
+                key={m}
+                size="sm"
+                variant={method === m ? "secondary" : "ghost"}
+                onClick={() => setMethod(m)}
+                className="h-8 text-xs px-2"
+              >
+                {m}
+              </Button>
+            ))}
           </div>
-          {urlError && (
-            <p className="text-sm text-destructive mt-2">{urlError}</p>
+          <Input
+            placeholder={t("apiClient.enterUrl")}
+            value={url}
+            onChange={(e) => {
+              setUrl(e.target.value);
+              setUrlError("");
+            }}
+            className="flex-1 font-mono text-sm h-8 bg-background"
+          />
+          <Button onClick={handleSend} disabled={loading} size="sm" className="h-8">
+            <Send className="h-3 w-3 mr-1" />
+            {loading ? t("common.loading") : t("common.send")}
+          </Button>
+        </div>
+        {urlError && (
+          <p className="text-sm text-destructive mt-2">{urlError}</p>
+        )}
+      </div>
+
+      {/* Headers and Body tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+        <TabsList className="h-8 justify-start">
+          <TabsTrigger value="headers" className="text-xs h-7">{t("apiClient.headers")}</TabsTrigger>
+          <TabsTrigger value="body" className="text-xs h-7">{t("apiClient.body")}</TabsTrigger>
+        </TabsList>
+        <div className="flex-1 min-h-0 mt-3">
+          {activeTab === "headers" && (
+            <TabsContent value="headers" className="m-0">
+              <Textarea
+                className="font-mono text-sm min-h-[80px] bg-card border-border"
+                placeholder={t("apiClient.headersPlaceholder")}
+                value={headers}
+                onChange={(e) => setHeaders(e.target.value)}
+              />
+            </TabsContent>
           )}
-        </CardHeader>
-        <CardContent className="flex-1 min-h-0 overflow-auto">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="headers">{t("apiClient.headers")}</TabsTrigger>
-              <TabsTrigger value="body">{t("apiClient.body")}</TabsTrigger>
-            </TabsList>
-            {activeTab === "headers" && (
-              <TabsContent value="headers">
-                <Textarea
-                  className="font-mono text-sm min-h-[100px]"
-                  placeholder={t("apiClient.headersPlaceholder")}
-                  value={headers}
-                  onChange={(e) => setHeaders(e.target.value)}
-                />
-              </TabsContent>
-            )}
-            {activeTab === "body" && (
-              <TabsContent value="body">
-                <Textarea
-                  className="font-mono text-sm min-h-[100px]"
-                  placeholder={t("apiClient.bodyPlaceholder")}
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                />
-              </TabsContent>
-            )}
-          </Tabs>
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>{t("apiClient.response")}</Label>
-              {status && (
-                <span className={`text-sm font-mono ${
-                  status >= 200 && status < 300 ? "text-green-500" : "text-red-500"
-                }`}>
-                  {status}
-                </span>
-              )}
-            </div>
-            <pre className="bg-muted/30 rounded-md p-3 font-mono text-sm overflow-auto min-h-[150px] max-h-[300px]">
-              {response || t("apiClient.responsePlaceholder")}
-            </pre>
-          </div>
-        </CardContent>
-      </Card>
+          {activeTab === "body" && (
+            <TabsContent value="body" className="m-0">
+              <Textarea
+                className="font-mono text-sm min-h-[80px] bg-card border-border"
+                placeholder={t("apiClient.bodyPlaceholder")}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+              />
+            </TabsContent>
+          )}
+        </div>
+      </Tabs>
+
+      {/* Response */}
+      <div className="bg-card border border-border rounded-lg p-3">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            {t("apiClient.response")}
+          </span>
+          {status && (
+            <span className={`text-xs font-mono font-medium ${
+              status >= 200 && status < 300 ? "text-green-500" : "text-red-500"
+            }`}>
+              {status}
+            </span>
+          )}
+        </div>
+        <pre className="bg-background/50 rounded-md p-3 font-mono text-xs overflow-auto min-h-[100px] max-h-[200px]">
+          {response || <span className="text-muted-foreground">{t("apiClient.responsePlaceholder")}</span>}
+        </pre>
+      </div>
     </div>
   );
 }
