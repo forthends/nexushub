@@ -5,8 +5,8 @@ const resources = {
   en: {
     translation: {
       app: {
-        title: "Developer Toolbox",
-        version: "Developer Toolbox v0.1.0",
+        title: "NexusHub",
+        version: "NexusHub v0.1.0",
       },
       nav: {
         jsonFormatter: "JSON Formatter",
@@ -146,8 +146,8 @@ const resources = {
   zh: {
     translation: {
       app: {
-        title: "开发者工具箱",
-        version: "开发者工具箱 v0.1.0",
+        title: "NexusHub",
+        version: "NexusHub v0.1.0",
       },
       nav: {
         jsonFormatter: "JSON 格式化",
