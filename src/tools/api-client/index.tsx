@@ -8,6 +8,15 @@ import { Globe, Send } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function ApiClient() {
   const { t } = useTranslation();
   const [url, setUrl] = useState("");
@@ -17,8 +26,26 @@ export function ApiClient() {
   const [response, setResponse] = useState("");
   const [status, setStatus] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("headers");
+  const [loading, setLoading] = useState(false);
+  const [urlError, setUrlError] = useState("");
 
   const handleSend = async () => {
+    setUrlError("");
+
+    if (!url.trim()) {
+      setUrlError(t("apiClient.enterUrl"));
+      return;
+    }
+
+    if (!isValidUrl(url)) {
+      setUrlError(t("apiClient.invalidUrl"));
+      return;
+    }
+
+    setLoading(true);
+    setResponse("");
+    setStatus(null);
+
     try {
       const parsedHeaders = JSON.parse(headers);
       const result = await fetch(url, {
@@ -34,8 +61,13 @@ export function ApiClient() {
         setResponse(text);
       }
     } catch (err) {
-      setResponse(`Error: ${err}`);
+      const errorMessage = err instanceof TypeError && err.message.includes("fetch")
+        ? `${t("apiClient.corsError")}\n${err}`
+        : `Error: ${err}`;
+      setResponse(errorMessage);
       setStatus(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,14 +98,20 @@ export function ApiClient() {
             <Input
               placeholder={t("apiClient.enterUrl")}
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e) => {
+                setUrl(e.target.value);
+                setUrlError("");
+              }}
               className="flex-1 font-mono"
             />
-            <Button onClick={handleSend}>
+            <Button onClick={handleSend} disabled={loading}>
               <Send className="h-4 w-4 mr-1" />
-              {t("common.send")}
+              {loading ? t("common.loading") : t("common.send")}
             </Button>
           </div>
+          {urlError && (
+            <p className="text-sm text-destructive mt-2">{urlError}</p>
+          )}
         </CardHeader>
         <CardContent className="flex-1 min-h-0 overflow-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>

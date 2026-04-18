@@ -68,6 +68,8 @@ const resources = {
         headersPlaceholder: '{"Content-Type": "application/json"}',
         bodyPlaceholder: "Request body...",
         enterUrl: "Enter URL...",
+        invalidUrl: "Invalid URL. Please include protocol (e.g. https://)",
+        corsError: "Request failed. This may be due to CORS restrictions or network issues.",
       },
       todos: {
         title: "Todos",
@@ -149,6 +151,8 @@ const resources = {
         headersPlaceholder: '{"Content-Type": "application/json"}',
         bodyPlaceholder: "请求体...",
         enterUrl: "输入 URL...",
+        invalidUrl: "无效的 URL，请包含协议（如 https://）",
+        corsError: "请求失败，可能由于 CORS 限制或网络问题。",
       },
       todos: {
         title: "待办事项",
@@ -166,9 +170,14 @@ const resources = {
   },
 };
 
+// Get saved language synchronously to prevent flash of default language
+const savedLanguage = typeof window !== "undefined"
+  ? localStorage.getItem("toolbox-language")
+  : null;
+
 i18n.use(initReactI18next).init({
   resources,
-  lng: "en",
+  lng: savedLanguage || "en",
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,
