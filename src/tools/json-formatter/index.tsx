@@ -10,21 +10,19 @@ import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const HISTORY_KEY = "toolbox-json-history";
 
-function isLightTheme() {
-  return document.documentElement.classList.contains("light");
-}
-
 export function JsonFormatter() {
   const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [showHistory, setShowHistory] = useState(false);
-  const [isLight, setIsLight] = useState(isLightTheme);
+  const [isLight, setIsLight] = useState(() => localStorage.getItem("theme") === "light");
   const historyRef = useRef<HTMLDivElement>(null);
   const { history, addToHistory, removeFromHistory, clearHistory, isLoaded } = useInputHistory(HISTORY_KEY);
 
   useEffect(() => {
-    const handleThemeChange = () => setIsLight(isLightTheme());
+    const handleThemeChange = () => {
+      setIsLight(document.documentElement.classList.contains("light"));
+    };
     window.addEventListener("themechange", handleThemeChange);
     return () => window.removeEventListener("themechange", handleThemeChange);
   }, []);
