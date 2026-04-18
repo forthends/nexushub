@@ -9,12 +9,14 @@ import {
   Box,
   Calendar,
   Link,
+  MessageSquare,
+  Key,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-export type ToolId = "json-formatter" | "timestamp" | "sql-formatter" | "api-client" | "todos" | "cron-parser" | "url-codec";
+export type ToolId = "json-formatter" | "timestamp" | "sql-formatter" | "api-client" | "todos" | "cron-parser" | "url-codec" | "prompt-tpl" | "api-key-manager";
 
 interface Tool {
   id: ToolId;
@@ -30,6 +32,8 @@ const tools: Tool[] = [
   { id: "todos", nameKey: "nav.todos", icon: <CheckSquare className="h-4 w-4" /> },
   { id: "cron-parser", nameKey: "nav.cronParser", icon: <Calendar className="h-4 w-4" /> },
   { id: "url-codec", nameKey: "nav.urlCodec", icon: <Link className="h-4 w-4" /> },
+  { id: "prompt-tpl", nameKey: "nav.promptTpl", icon: <MessageSquare className="h-4 w-4" /> },
+  { id: "api-key-manager", nameKey: "nav.apiKeyManager", icon: <Key className="h-4 w-4" /> },
 ];
 
 import { JsonFormatter } from "@/tools/json-formatter";
@@ -39,6 +43,8 @@ import { ApiClient } from "@/tools/api-client";
 import { Todos } from "@/tools/todos";
 import { CronParser } from "@/tools/cron-parser";
 import { UrlCodec } from "@/tools/url-codec";
+import { PromptTpl } from "@/tools/prompt-tpl";
+import { ApiKeyManager } from "@/tools/api-key-manager";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useState, useEffect } from "react";
 import { type ComponentType } from "react";
@@ -55,6 +61,8 @@ const TOOLS: Record<ToolId, ToolComponent> = {
   todos: { component: Todos },
   "cron-parser": { component: CronParser },
   "url-codec": { component: UrlCodec },
+  "prompt-tpl": { component: PromptTpl },
+  "api-key-manager": { component: ApiKeyManager },
 };
 
 function App() {
