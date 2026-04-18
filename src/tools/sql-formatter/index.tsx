@@ -5,45 +5,50 @@ import { Database, Copy, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+const SQL_KEYWORDS = [
+  "SELECT", "FROM", "WHERE", "AND", "OR", "INSERT", "UPDATE", "DELETE",
+  "CREATE", "TABLE", "DROP", "ALTER", "INTO", "VALUES", "SET", "JOIN",
+  "LEFT", "RIGHT", "INNER", "OUTER", "ON", "GROUP", "BY", "ORDER", "HAVING",
+  "LIMIT", "OFFSET", "AS", "DISTINCT", "COUNT", "SUM", "AVG", "MAX", "MIN",
+  "NULL", "NOT", "IN", "LIKE", "BETWEEN", "IS", "EXISTS", "CASE", "WHEN",
+  "THEN", "ELSE", "END", "UNION", "ALL", "ASC", "DESC"
+];
+
+const SQL_KEYWORD_REGEXES = SQL_KEYWORDS.map(
+  (kw) => new RegExp(`\\b${kw}\\b`, "gi")
+);
+
+function formatSql(input: string): string {
+  let formatted = input;
+  SQL_KEYWORD_REGEXES.forEach((regex, i) => {
+    formatted = formatted.replace(regex, SQL_KEYWORDS[i]);
+  });
+
+  return formatted
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/,\s*/g, ",\n  ")
+    .replace(/\bFROM\b/gi, "\nFROM")
+    .replace(/\bWHERE\b/gi, "\nWHERE")
+    .replace(/\bAND\b/gi, "\n  AND")
+    .replace(/\bOR\b/gi, "\n  OR")
+    .replace(/\bJOIN\b/gi, "\nJOIN")
+    .replace(/\bLEFT JOIN\b/gi, "\nLEFT JOIN")
+    .replace(/\bRIGHT JOIN\b/gi, "\nRIGHT JOIN")
+    .replace(/\bINNER JOIN\b/gi, "\nINNER JOIN")
+    .replace(/\bGROUP BY\b/gi, "\nGROUP BY")
+    .replace(/\bORDER BY\b/gi, "\nORDER BY")
+    .replace(/\bHAVING\b/gi, "\nHAVING")
+    .replace(/\bLIMIT\b/gi, "\nLIMIT");
+}
+
 export function SqlFormatter() {
   const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
 
   const handleFormat = () => {
-    const keywords = [
-      "SELECT", "FROM", "WHERE", "AND", "OR", "INSERT", "UPDATE", "DELETE",
-      "CREATE", "TABLE", "DROP", "ALTER", "INTO", "VALUES", "SET", "JOIN",
-      "LEFT", "RIGHT", "INNER", "OUTER", "ON", "GROUP", "BY", "ORDER", "HAVING",
-      "LIMIT", "OFFSET", "AS", "DISTINCT", "COUNT", "SUM", "AVG", "MAX", "MIN",
-      "NULL", "NOT", "IN", "LIKE", "BETWEEN", "IS", "EXISTS", "CASE", "WHEN",
-      "THEN", "ELSE", "END", "UNION", "ALL", "ASC", "DESC"
-    ];
-
-    let formatted = input;
-    keywords.forEach((kw) => {
-      const regex = new RegExp(`\\b${kw}\\b`, "gi");
-      formatted = formatted.replace(regex, kw);
-    });
-
-    formatted = formatted
-      .replace(/\s+/g, " ")
-      .trim()
-      .replace(/,\s*/g, ",\n  ")
-      .replace(/\bFROM\b/gi, "\nFROM")
-      .replace(/\bWHERE\b/gi, "\nWHERE")
-      .replace(/\bAND\b/gi, "\n  AND")
-      .replace(/\bOR\b/gi, "\n  OR")
-      .replace(/\bJOIN\b/gi, "\nJOIN")
-      .replace(/\bLEFT JOIN\b/gi, "\nLEFT JOIN")
-      .replace(/\bRIGHT JOIN\b/gi, "\nRIGHT JOIN")
-      .replace(/\bINNER JOIN\b/gi, "\nINNER JOIN")
-      .replace(/\bGROUP BY\b/gi, "\nGROUP BY")
-      .replace(/\bORDER BY\b/gi, "\nORDER BY")
-      .replace(/\bHAVING\b/gi, "\nHAVING")
-      .replace(/\bLIMIT\b/gi, "\nLIMIT");
-
-    setOutput(formatted);
+    setOutput(formatSql(input));
   };
 
   const handleClear = () => {
