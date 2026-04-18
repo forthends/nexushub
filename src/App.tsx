@@ -7,12 +7,14 @@ import {
   Globe,
   CheckSquare,
   Box,
+  Calendar,
+  Link,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-export type ToolId = "json-formatter" | "timestamp" | "sql-formatter" | "api-client" | "todos";
+export type ToolId = "json-formatter" | "timestamp" | "sql-formatter" | "api-client" | "todos" | "cron-parser" | "url-codec";
 
 interface Tool {
   id: ToolId;
@@ -26,6 +28,8 @@ const tools: Tool[] = [
   { id: "sql-formatter", nameKey: "nav.sqlFormatter", icon: <Database className="h-4 w-4" /> },
   { id: "api-client", nameKey: "nav.apiClient", icon: <Globe className="h-4 w-4" /> },
   { id: "todos", nameKey: "nav.todos", icon: <CheckSquare className="h-4 w-4" /> },
+  { id: "cron-parser", nameKey: "nav.cronParser", icon: <Calendar className="h-4 w-4" /> },
+  { id: "url-codec", nameKey: "nav.urlCodec", icon: <Link className="h-4 w-4" /> },
 ];
 
 import { JsonFormatter } from "@/tools/json-formatter";
@@ -33,6 +37,8 @@ import { Timestamp } from "@/tools/timestamp";
 import { SqlFormatter } from "@/tools/sql-formatter";
 import { ApiClient } from "@/tools/api-client";
 import { Todos } from "@/tools/todos";
+import { CronParser } from "@/tools/cron-parser";
+import { UrlCodec } from "@/tools/url-codec";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useState, useEffect } from "react";
 import { type ComponentType } from "react";
@@ -47,6 +53,8 @@ const TOOLS: Record<ToolId, ToolComponent> = {
   "sql-formatter": { component: SqlFormatter },
   "api-client": { component: ApiClient },
   todos: { component: Todos },
+  "cron-parser": { component: CronParser },
+  "url-codec": { component: UrlCodec },
 };
 
 function App() {
