@@ -1,19 +1,30 @@
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+
+function isLightTheme() {
+  return document.documentElement.classList.contains("light");
+}
 
 export function ThemeToggle() {
+  const [isLight, setIsLight] = useState(isLightTheme);
+
+  useEffect(() => {
+    const handleThemeChange = () => setIsLight(isLightTheme());
+    window.addEventListener("themechange", handleThemeChange);
+    return () => window.removeEventListener("themechange", handleThemeChange);
+  }, []);
+
   const toggleTheme = () => {
-    const isDark = document.documentElement.classList.contains("light");
-    if (isDark) {
+    if (isLight) {
       document.documentElement.classList.remove("light");
       localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.add("light");
       localStorage.setItem("theme", "light");
     }
+    window.dispatchEvent(new Event("themechange"));
   };
-
-  const isLight = document.documentElement.classList.contains("light");
 
   return (
     <Button variant="ghost" size="sm" onClick={toggleTheme} className="h-8 w-8 p-0">
